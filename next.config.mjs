@@ -5,7 +5,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: '/music-visualizer'
 };
 
 export default nextConfig;
