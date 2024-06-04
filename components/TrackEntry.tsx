@@ -3,6 +3,7 @@ import React, { createRef, useEffect, useRef, useState } from "react";
 import IconButton from "./IconButton";
 import Options from "./svgs/Options";
 import styles from "../styles/TrackEntry.module.css";
+import Image from "next/image";
 
 interface TrackEntryProps {
   index: number;
@@ -44,7 +45,7 @@ export const TrackEntry: React.FC<TrackEntryProps> = ({
       textNode.classList.add(`${styles.movingText}`);
       //   textNode.style.fontSize = `${fontSize - 1}px`; // Decrease font size by 1 pixel
     }
-  }, []);
+  }, [containerRef]);
 
   const handleMenuToggle = () => {
     if (btnRef.current) {
@@ -76,7 +77,12 @@ export const TrackEntry: React.FC<TrackEntryProps> = ({
         className="flex items-center text-center justify-between flex-1"
         onClick={() => playTrack(index)}
       >
-        <img src={track.cover} alt="track cover" height={40} width={40} />
+        <Image
+          src={track.cover ?? ""}
+          alt="track cover"
+          height={40}
+          width={40}
+        />
         <div ref={containerRef} className="flex flex-col overflow-hidden">
           <span
             className={`text-primary-light dark:text-primary-dark max-w-28 font-bold whitespace-nowrap`}

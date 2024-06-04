@@ -51,7 +51,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
         rangeInput.removeEventListener("input", handleInput);
       }
     };
-  }, []);
+  }, [currentTrackId, min, max]);
 
   return (
     <input

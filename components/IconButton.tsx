@@ -33,28 +33,6 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   }
 );
 
-// const IconButton: React.FC<IconButtonProps> = ({
-//   icon: Icon,
-//   onClick,
-//   className,
-// }) => {
-//   const [animate, setAnimate] = useState(false);
-
-//   const handleClick = () => {
-//     if (onClick) onClick();
-//     setAnimate(true);
-//     setTimeout(() => setAnimate(false), 200);
-//   };
-//   return (
-//     <button
-//       className={`icon-button ${className ?? ""} ${
-//         animate ? styles.animate : ""
-//       }`}
-//       onClick={handleClick}
-//     >
-//       {Icon}
-//     </button>
-//   );
-// };
+IconButton.displayName = "IconButton";
 
 export default IconButton;
