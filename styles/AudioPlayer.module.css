@@ -1,0 +1,27 @@
+.audioButton {
+  border-radius: 50%;
+  mask-repeat: no-repeat;
+  mask-size: cover, 25px 25px;
+  mask-position: center, center;
+  mask-composite: exclude;
+  mask-mode: luminance;
+}
+
+.play {
+  mask-image: url(../public/imgs/background.svg), url(../public/imgs/play.svg);
+}
+.pause {
+  mask-image: url(../public/imgs/background.svg), url(../public/imgs/pause.svg);
+}
+.animate {
+  animation: pulse 0.2s ease;
+}
+
+@keyframes pulse {
+  50% {
+    mask-size: cover, 25px 23px;
+  }
+  100% {
+    mask-size: cover, 25px 26px;
+  }
+}

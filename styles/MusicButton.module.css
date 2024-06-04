@@ -1,0 +1,59 @@
+.mask {
+  width: 4rem;
+  height: 4rem;
+  mask-image: url(../public/imgs/musicMask.svg);
+  mask-mode: luminance;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: cover;
+}
+
+.btnContainer {
+  position: relative;
+  height: 200px;
+}
+
+.menu {
+  display: none;
+  position: absolute;
+  border-radius: 4px;
+  z-index: 999;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.menu.active {
+  display: block;
+}
+
+.menu:after,
+.menu:before {
+  bottom: 100%;
+  left: 12%;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-left-color: transparent;
+  content: "";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.menu:after {
+  border-width: 15px;
+  margin-left: -15px;
+}
+
+.animate {
+  animation: pulse 0.2s ease;
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}

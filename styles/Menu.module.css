@@ -1,0 +1,90 @@
+.menuTest {
+  width: 8rem;
+  height: 4rem;
+  border-radius: 999px;
+  mask-repeat: no-repeat;
+  mask-size: cover, 25px 25px, 25px 25px;
+  mask-position: center, 24%, 77%;
+  mask-origin: view-box;
+  mask-composite: exclude;
+  mask-mode: luminance;
+  mix-blend-mode: destination-out;
+}
+
+.btnContainer {
+  position: relative;
+  height: 200px;
+}
+
+.menu {
+  display: none;
+  position: absolute;
+  border-radius: 4px;
+  z-index: 999;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.menu.active {
+  display: block;
+}
+
+.menu:after,
+.menu:before {
+  bottom: 100%;
+  left: 88%;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-left-color: transparent;
+  content: "";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.menu:after {
+  border-width: 15px;
+  margin-left: -15px;
+}
+
+.menuLightMode {
+  mask-image: url(../public/imgs/background.svg),
+    url(../public/imgs/lightMode.svg), url(../public/imgs/info.svg);
+}
+
+.menuDarkMode {
+  mask-image: url(../public/imgs/background.svg),
+    url(../public/imgs/darkMode.svg), url(../public/imgs/info.svg);
+}
+
+.button {
+  width: 2rem;
+  height: 2rem;
+}
+
+.darkModeAnimation {
+  animation: modePulse 0.2s ease;
+}
+
+.infoAnimation {
+  animation: infoPulse 0.2s ease;
+}
+
+@keyframes modePulse {
+  50% {
+    mask-size: cover, 25px 23px, 25px 25px;
+  }
+  100% {
+    mask-size: cover, 25px 26px, 25px 25px;
+  }
+}
+
+@keyframes infoPulse {
+  50% {
+    mask-size: cover, 25px 25px, 25px 23px;
+  }
+  100% {
+    mask-size: cover, 25px 25px, 25px 26px;
+  }
+}

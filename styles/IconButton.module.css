@@ -1,0 +1,12 @@
+.animate {
+  animation: pulse 0.2s ease;
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}

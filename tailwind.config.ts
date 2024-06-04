@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 const config: Config = {
   content: [
@@ -8,13 +9,29 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      backgroundImage: ({ theme }) => ({
+        "radial-gradient": `radial-gradient(circle, ${theme(
+          "colors.secondary"
+        )}, ${theme("colors.accent.light")}, ${theme("colors.primary.light")})`,
+      }),
+      colors: {
+        primary: { light: "#7d2eae", dark: "#c872ff" },
+        secondary: "#d375ff",
+        accent: { light: "#eb61c4", dark: "#8d146a" },
+        light: "#fffafa",
+        dark: "#1f1f32",
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({ addVariant }) {
+      addVariant("slider-thumb", [
+        "&::-webkit-slider-thumb",
+        "&::slider-thumb",
+      ]);
+      addVariant("slider-track", "&::-webkit-slider-runnable-track");
+    }),
+  ],
+  darkMode: "class",
 };
 export default config;
