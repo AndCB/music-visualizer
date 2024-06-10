@@ -1,14 +1,15 @@
 import { useAudioVisualizer } from "@/contexts/PlaylistContext";
-import React from "react";
 
 export const AudioCanvas = () => {
   useAudioVisualizer();
+
   return (
-    <div className="flex justify-center items-center mx-auto my-[10%]">
+    <div className="flex justify-center items-center h-3/6 w-11/12 self-center">
       <canvas
         id="audioVisualizerCanvas"
         width={800}
         height={400}
+        className="w-full h-full"
       />
     </div>
   );

@@ -82,6 +82,7 @@ export const TrackEntry: React.FC<TrackEntryProps> = ({
           alt="track cover"
           height={40}
           width={40}
+          fetchPriority="low"
         />
         <div ref={containerRef} className="flex flex-col overflow-hidden">
           <span

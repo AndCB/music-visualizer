@@ -310,15 +310,18 @@ export const useAudioVisualizer = () => {
 
       const barWidth = width / 2 / bufferLength;
       let barHeight;
-      let firstx = 0;
-      let secondx = bufferLength * barWidth;
+      let firstx = barWidth;
+      let halfWidth = bufferLength * barWidth;
+      let secondx = halfWidth;
+      // console.log(`bufferLength: ${bufferLength} secondX: ${secondx}`);
       canvasCtx.fillStyle = theme == "dark" ? "#1f1f32" : "#fffafa";
 
       for (let i = 0; i < bufferLength!; i++) {
-        barHeight = Math.max(1, (dataArray[i] / 300) * height);
+        //frequency data is a value from 0 to 255
+        barHeight = Math.max(1, (dataArray[i] / 255) * height);
 
         canvasCtx.fillRect(
-          width / 2 - firstx,
+          halfWidth - firstx,
           height - barHeight,
           barWidth,
           barHeight

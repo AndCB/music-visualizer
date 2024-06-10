@@ -15,9 +15,13 @@ export default function Home() {
   if (!mounted) return null;
 
   return (
-    <div className="content bg-radial-gradient">
+    <div className="content bg-radial-gradient flex flex-col">
       <Head>
         <title>Music Visualizer</title>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0"
+        ></meta>
       </Head>
       <HeaderComponent />
       <AudioCanvas />

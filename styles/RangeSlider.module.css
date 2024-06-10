@@ -9,7 +9,6 @@
   appearance: none;
   background: transparent;
   cursor: pointer;
-  min-width: 5em;
 }
 
 /* Removes default focus */

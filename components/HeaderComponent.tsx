@@ -4,7 +4,7 @@ import Menu from "./Menu";
 
 const HeaderComponent = () => {
   return (
-    <div className="flex justify-between m-2">
+    <div className="flex justify-between m-2 h-1/6">
       <MusicButton></MusicButton>
       <Menu />
     </div>

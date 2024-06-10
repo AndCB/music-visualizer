@@ -59,8 +59,8 @@ const AudioPlayer = () => {
   }, [currentTrackId, audioRef]);
 
   return (
-    <div className="fixed bottom-0 p-4 w-screen h-60 flex items-center justify-center flex-col gap-6">
-      <div className="flex justify-center items-center flex-col w-full">
+    <div className="p-4 w-screen h-2/6 flex items-center justify-center flex-col gap-6">
+      <div className="flex justify-center items-center flex-col w-full flex-1">
         <div className="flex justify-between w-10/12">
           <span className="text-light dark:text-dark">{currentTime}</span>
           <span className="text-light dark:text-dark font-bold">
@@ -79,9 +79,9 @@ const AudioPlayer = () => {
           onChange={updateTime}
         />
       </div>
-      <div className="flex justify-between items-center w-[100%]">
-        <div className="w-4/12"></div>
-        <div className="w-4/12 flex justify-center">
+      <div className="flex justify-between md:justify-evenly items-center w-[100%] flex-1">
+        <div className="w-1/6"></div>
+        <div className="w-3/6 md:w-2/6 flex justify-center">
           <div className="flex items-center justify-around w-60">
             <IconButton
               className="w-10 h-10"
@@ -91,7 +91,9 @@ const AudioPlayer = () => {
             <IconButton
               icon={
                 <div
-                  className={`${styles.audioButton} w-16 h-16 ${
+                  className={`${
+                    styles.audioButton
+                  } max-w-16 max-h-16 min-w-10 min-h-10 h-[16vw] w-[16vw] ${
                     isPlaying ? styles.pause : styles.play
                   }
               ${theme != "dark" ? "bg-light" : "bg-dark"}
@@ -107,7 +109,7 @@ const AudioPlayer = () => {
             />
           </div>
         </div>
-        <div className="w-4/12 flex justify-center gap-2">
+        <div className="w-1/6 flex md:justify-center gap-2 flex-col-reverse items-center h-full md:flex-row">
           <IconButton
             icon={<Volume value={volume} />}
             className="h-6 w-6 fill-light dark:fill-dark"
@@ -118,7 +120,7 @@ const AudioPlayer = () => {
             max={1}
             value={volume}
             step={0.05}
-            className="max-w-60"
+            className="max-w-60 w-full origin-left -rotate-90 translate-x-1/2 md:transform-none"
             onChange={changeVolume}
           />
         </div>
