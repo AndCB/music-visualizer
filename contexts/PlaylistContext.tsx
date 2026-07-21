@@ -5,6 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { assetUrl } from "../services/assetUrl";
 
 export interface Track {
   // id: number;
@@ -81,7 +82,7 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({
       album: "Bagatelle in A Minor",
       formattedDuration: "3:06",
       duration: 186,
-      url: "/demo.mp3",
+      url: assetUrl("/demo.mp3"),
     };
     setPlaylist([demo]);
     setCurrentTrackId(0);
