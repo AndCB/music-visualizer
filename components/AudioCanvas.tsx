@@ -4,11 +4,11 @@ export const AudioCanvas = () => {
   useAudioVisualizer();
 
   return (
-    <div className="flex justify-center items-center h-3/6 w-11/12 self-center">
+    <div className="flex justify-center items-center h-4/6 w-11/12 self-center">
       <canvas
         id="audioVisualizerCanvas"
-        width={800}
-        height={400}
+        width={1000}
+        height={500}
         className="w-full h-full"
       />
     </div>

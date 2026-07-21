@@ -9,11 +9,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: ({ theme }) => ({
-        "radial-gradient": `radial-gradient(circle, ${theme(
-          "colors.secondary"
-        )}, ${theme("colors.accent.light")}, ${theme("colors.primary.light")})`,
-      }),
+      backgroundImage: ({ theme }) => ({}),
       colors: {
         primary: { light: "#7d2eae", dark: "#c872ff" },
         secondary: "#d375ff",

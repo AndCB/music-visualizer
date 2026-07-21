@@ -1,10 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "../styles/Menu.module.css";
 import { useTheme } from "next-themes";
+import { Sun, Moon, Info } from "lucide-react";
 
 const Menu = () => {
   const { theme, setTheme } = useTheme();
-  const [animate, setAnimate] = useState({ status: false, animation: "" });
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  const [themeAnimate, setThemeAnimate] = useState(false);
+  const [infoAnimate, setInfoAnimate] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
   const [menuPosition, setMenuPosition] = useState<{
@@ -21,25 +28,25 @@ const Menu = () => {
     if (btnRef.current) {
       const rect = btnRef.current.getBoundingClientRect();
       setMenuPosition({
-        top: rect.bottom - window.scrollY,
-        right: window.innerWidth - rect.right - window.scrollX,
+        top: rect.bottom,
+        right: window.innerWidth - rect.right - 8,
       });
       setMenuOpen(!menuOpen);
     }
   };
 
   const darkModeClick = () => {
-    setAnimate({ status: true, animation: styles.darkModeAnimation });
+    setThemeAnimate(true);
     toggleTheme();
     setTimeout(() => {
-      setAnimate({ status: false, animation: "" });
+      setThemeAnimate(false);
     }, 200);
   };
 
   const infoClick = () => {
-    setAnimate({ status: true, animation: styles.infoAnimation });
+    setInfoAnimate(true);
     setTimeout(() => {
-      setAnimate({ status: false, animation: "" });
+      setInfoAnimate(false);
     }, 200);
     toggleMenu();
   };
@@ -58,40 +65,45 @@ const Menu = () => {
     }
   };
 
+  const isDark = mounted && theme === "dark";
+
   return (
     <div ref={menuRef}>
-      <div
-        className={`${styles.menuTest} bg-light dark:bg-dark relative ${
-          theme !== "dark" ? styles.menuLightMode : styles.menuDarkMode
-        } flex justify-evenly items-center ${
-          animate.status ? animate.animation : ""
-        }`}
-      >
+      <div className="flex justify-start items-center gap-2 mr-4">
         <button
           id="darkModeButton"
-          className={styles.button}
           onClick={darkModeClick}
-        />
+          className={`w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white hover:bg-white/30 transition-all duration-200 ${
+            themeAnimate ? "scale-90" : ""
+          }`}
+          aria-label="Toggle theme"
+        >
+          {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+        </button>
         <button
           ref={btnRef}
           id="infoButton"
-          className={styles.button}
           onClick={infoClick}
-        />
+          className={`w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white hover:bg-white/30 transition-all duration-200 ${
+            infoAnimate ? "scale-90" : ""
+          }`}
+          aria-label="Info"
+        >
+          <Info className="w-4 h-4" />
+        </button>
       </div>
       {menuOpen && (
         <div
-          className={`${styles.menu} 
-            after:border-b-light dark:after:border-b-dark p-2
+          className={`${styles.menu} p-2 rounded-2xl
             ${menuOpen ? styles.active : ""} 
-            w-60 bg-light dark:bg-dark border-light dark:border-dark`}
+            w-60 bg-white/20 backdrop-blur-sm border border-white/30`}
           style={{
-            position: "absolute",
-            top: `calc(${menuPosition.top}px + 3em)`,
-            right: `calc(${menuPosition.right}px - 1em)`,
+            position: "fixed",
+            top: `${menuPosition.top + 28}px`,
+            right: `${menuPosition.right}px`,
           }}
         >
-          <h2 className="text-primary-light dark:text-primary-dark">
+          <h2 className="text-white/80">
             Basic music player made in NextJS with visualizations generated using web audio API.
             <br />
             <br />

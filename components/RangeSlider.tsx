@@ -65,10 +65,8 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
       className={`
       ${styles.customInput}
         slider-track:bg-gradient-to-b
-       slider-track:from-light 
-       slider-track:to-light
-       slider-track:dark:from-dark 
-       slider-track:dark:to-dark
+       slider-track:from-white/40 
+       slider-track:to-white/40
        slider-track:bg-[position:0px_50%]
        slider-track:bg-clip-border
        slider-track:bg-origin-padding
@@ -77,29 +75,23 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
        slider-track:bg-transparent
        slider-track:border-2 
        slider-track:border-solid 
-       slider-track:border-light 
-       slider-track:dark:border-dark 
+       slider-track:border-white/30
        slider-track:rounded-lg 
        slider-track:h-[.8em]
-       [&::-webkit-slider-thumb]:bg-light
-       [&::-webkit-slider-thumb]:dark:bg-dark
+       [&::-webkit-slider-thumb]:bg-white
        [&::-ms-track]:box-border
        [&::-ms-track]:border-none
        [&::-moz-range-progress]:bg-transparent
-       [&::-moz-range-track]:border-light
-       [&::-moz-range-track]:dark:border-dark
+       [&::-moz-range-track]:border-white/30
        [&::-moz-range-track]:bg-gradient-to-b
-       [&::-moz-range-track]:from-light
-       [&::-moz-range-track]:to-light
-       [&::-moz-range-track]:dark:from-dark
-       [&::-moz-range-track]:dark:to-dark
+       [&::-moz-range-track]:from-white/40
+       [&::-moz-range-track]:to-white/40
        [&::-moz-range-track]:bg-[position:0px_50%]
        [&::-moz-range-track]:bg-clip-border
        [&::-moz-range-track]:bg-origin-padding
        [&::-moz-range-track]:bg-[size:var(--sx)_100%] 
        [&::-moz-range-track]:bg-no-repeat 
-       [&::-moz-range-thumb]:bg-light
-       [&::-moz-range-thumb]:dark:bg-dark
+       [&::-moz-range-thumb]:bg-white
        ${className}
        `}
       style={

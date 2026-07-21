@@ -5,10 +5,10 @@ import { usePlaylist } from "@/contexts/PlaylistContext";
 import { getTrackData } from "@/services/MusicMetadataService";
 import { TrackEntry } from "./TrackEntry";
 import Toast, { ToastMessage } from "./Toast";
+import { Music2 } from "lucide-react";
 
 export const MusicButton = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
   const [menuPosition, setMenuPosition] = useState<{
     top: number;
     left: number;
@@ -47,8 +47,7 @@ export const MusicButton = () => {
 
   const handleOutsideClick = (event: MouseEvent) => {
     if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-      // setMenuOpen(false);
-      setOpenMenuIndex(null);
+      setMenuOpen(false);
     }
   };
 
@@ -65,10 +64,6 @@ export const MusicButton = () => {
         setAnimate(false);
       }, 200);
     }
-  };
-
-  const handleSubmenuToggle = (index: number) => {
-    setOpenMenuIndex(openMenuIndex === index ? null : index);
   };
 
   const onDrop = async (files: File[]) => {
@@ -117,18 +112,19 @@ export const MusicButton = () => {
     <div ref={menuRef}>
       <button
         onClick={toggleMenu}
-        className={`${styles.mask} ${
-          animate ? styles.animate : ""
-        } bg-light dark:bg-dark`}
+        className={`w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white hover:bg-white/30 transition-all duration-200 ${
+          animate ? "scale-90" : ""
+        }`}
         ref={btnRef}
-      />
+        aria-label="Open playlist"
+      >
+        <Music2 className="w-8 h-8" />
+      </button>
       {menuOpen && (
         <div
-          className={`${styles.menu} 
-          after:border-b-light dark:after:border-b-dark p-2
-          ${
-            menuOpen ? styles.active : ""
-          } w-60 bg-light dark:bg-dark border-light dark:border-dark`}
+          className={`${styles.menu} p-2 rounded-2xl
+          ${menuOpen ? styles.active : ""} 
+          w-60 bg-white/20 backdrop-blur-sm border border-white/30`}
           style={{
             top: `calc(${menuPosition.top}px + 2em)`,
             left: `${menuPosition.left}px`,
@@ -140,31 +136,31 @@ export const MusicButton = () => {
           {isLoading && loadingProgress && (
             <div className="mt-2 p-2">
               <div className="flex items-center gap-2 mb-1">
-                <div className="w-4 h-4 border-2 border-primary-light dark:border-primary-dark border-t-transparent rounded-full animate-spin" />
-                <span className="text-xs text-primary-light dark:text-primary-dark">
+                <div className="w-4 h-4 border-2 border-white/60 border-t-transparent rounded-full animate-spin" />
+                <span className="text-xs text-white/80">
                   Processing tracks...
                 </span>
               </div>
-              <div className="w-full bg-primary-light/20 dark:bg-primary-dark/20 rounded-full h-1.5">
+              <div className="w-full bg-white/10 rounded-full h-1.5">
                 <div
-                  className="bg-primary-light dark:bg-primary-dark h-1.5 rounded-full transition-all duration-300"
+                  className="bg-white/60 h-1.5 rounded-full transition-all duration-300"
                   style={{
                     width: `${(loadingProgress.current / loadingProgress.total) * 100}%`,
                   }}
                 />
               </div>
-              <span className="text-xs text-primary-light/60 dark:text-primary-dark/60">
+              <span className="text-xs text-white/50">
                 {loadingProgress.current} / {loadingProgress.total}
               </span>
             </div>
           )}
 
-          <hr className="m-4 border-t-primary-light dark:border-t-primary-dark" />
-          <h2 className="text-primary-light dark:text-primary-dark">
+          <hr className="m-4 border-t-white/20" />
+          <h2 className="text-white/90">
             Playlist
           </h2>
           {playlist.length == 0 ? (
-            <div className="text-primary-light dark:text-primary-dark text-center m-4">
+            <div className="text-white/60 text-center m-4">
               Empty!
             </div>
           ) : (
@@ -177,8 +173,6 @@ export const MusicButton = () => {
                   key={index}
                   index={index}
                   track={item}
-                  isOpen={openMenuIndex === index}
-                  onMenuToggle={() => handleSubmenuToggle(index)}
                 />
               ))}
             </div>

@@ -60,21 +60,22 @@ const DragNDrop: React.FC<DragNDropProps> = ({
         className={`
           border-dashed border-2 rounded-3xl flex justify-center items-center text-center
           transition-all duration-200 ease-in-out
+          bg-white/10 backdrop-blur-sm
           ${
             isDragging
-              ? "border-primary-light dark:border-primary-dark scale-[1.02] bg-primary-light/10 dark:bg-primary-dark/10"
-              : "border-primary-light/50 dark:border-primary-dark/50"
+              ? "border-white/70 scale-[1.02] bg-white/20"
+              : "border-white/30"
           }
         `}
         style={{
           width: width || "100%",
           height: height || "100%",
-          minHeight: "10em",
-          minWidth: "10em",
+          minHeight: "6em",
+          minWidth: "6em",
         }}
       >
         <div className={`transition-transform duration-200 ${isDragging ? "scale-110" : ""}`}>
-          <p className="text-primary-light dark:text-primary-dark w-5/6 mx-auto">
+          <p className="text-white/80 w-5/6 mx-auto">
             {isDragging ? (
               <span className="font-bold">Drop your files here! 🎵</span>
             ) : (

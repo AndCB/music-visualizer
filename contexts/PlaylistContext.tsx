@@ -1,4 +1,3 @@
-import { useTheme } from "next-themes";
 import React, {
   createContext,
   useContext,
@@ -81,7 +80,7 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({
       );
 
       const analizer = audioContextRef.current.createAnalyser();
-      analizer.fftSize = 32;
+      analizer.fftSize = 128;
       bufferLengthRef.current = analizer.frequencyBinCount;
       dataArrayRef.current = new Uint8Array(new ArrayBuffer(analizer.frequencyBinCount));
       analizerRef.current = analizer;
@@ -123,27 +122,33 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({
           audioRef.current.src = playlist[currentTrackId].url;
           setUpdateSrc(false);
         }
-        isPlaying ? audioRef.current?.play() : audioRef.current?.pause();
+        if (isPlaying) {
+          audioRef.current.play().catch((error) => {
+            if (error.name !== "AbortError") {
+              console.error("Audio play error:", error);
+            }
+          });
+        } else {
+          audioRef.current.pause();
+        }
       } else {
         audioRef.current.pause();
         audioRef.current.src = "";
       }
     }
-    // if (!audioRef.current || currentTrackId === null || playlist.length < 0)
-    //   return;
-    // audioRef.current.src = playlist[currentTrackId].url;
-    // isPlaying ? audioRef.current?.play() : audioRef.current?.pause();
   }, [currentTrackId, updateSrc]);
 
   useEffect(() => {
-    if (!audioRef.current || currentTrackId === null) return;
-    audioRef.current.src = playlist[currentTrackId].url;
-    isPlaying ? audioRef.current?.play() : audioRef.current?.pause();
-  }, []);
-
-  useEffect(() => {
     if (!audioRef.current) return;
-    isPlaying ? audioRef.current?.play() : audioRef.current?.pause();
+    if (isPlaying) {
+      audioRef.current.play().catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error("Audio play error:", error);
+        }
+      });
+    } else {
+      audioRef.current.pause();
+    }
   }, [isPlaying]);
 
   const addTrack = (track: Track) => {
@@ -276,12 +281,12 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({
 };
 
 export const useAudioVisualizer = () => {
-  const { analyzer, dataArray, bufferLength } = usePlaylist();
-  const { theme } = useTheme();
+  const { analyzer, dataArray, volume } = usePlaylist();
   const animationFrameIdRef = useRef<number | null>(null);
+  const volumeRef = useRef(volume);
+  volumeRef.current = volume;
 
   useEffect(() => {
-    // console.log(audioContext);
     const canvas = document.getElementById(
       "audioVisualizerCanvas"
     ) as HTMLCanvasElement;
@@ -291,8 +296,12 @@ export const useAudioVisualizer = () => {
     const canvasCtx = canvas.getContext("2d");
     if (!canvasCtx) return;
 
+    // Smooth heights for decay effect
+    const activeBars = 32;
+    const smoothHeights = new Float32Array(activeBars);
+
     const draw = () => {
-      if (!analyzer || !dataArray || !bufferLength) return;
+      if (!analyzer || !dataArray) return;
 
       analyzer.getByteFrequencyData(dataArray);
 
@@ -301,27 +310,43 @@ export const useAudioVisualizer = () => {
 
       canvasCtx.clearRect(0, 0, width, height);
 
-      const barWidth = width / 2 / bufferLength;
-      let barHeight;
-      let firstx = barWidth;
-      let halfWidth = bufferLength * barWidth;
-      let secondx = halfWidth;
-      // console.log(`bufferLength: ${bufferLength} secondX: ${secondx}`);
-      canvasCtx.fillStyle = theme == "dark" ? "#1f1f32" : "#fffafa";
+      const halfWidth = width / 2;
+      const gap = 2;
+      const barWidth = (halfWidth - gap * (activeBars - 1)) / activeBars;
+      const step = barWidth + gap;
+      canvasCtx.fillStyle = "rgba(255, 255, 255, 0.7)";
 
-      for (let i = 0; i < bufferLength!; i++) {
-        //frequency data is a value from 0 to 255
-        barHeight = Math.max(1, (dataArray[i] / 255) * height);
+      const volScale = 0.3 + volumeRef.current * 0.7;
 
+      for (let i = 0; i < activeBars; i++) {
+        // Raw frequency value (0-1) — natural height, small during silence
+        const raw = dataArray[i] / 255;
+        const target = Math.max(1, raw * height * volScale);
+
+        // Smooth decay: bars rise instantly but fall with a slow decay
+        if (target > smoothHeights[i]) {
+          smoothHeights[i] = target;
+        } else {
+          smoothHeights[i] += (target - smoothHeights[i]) * 0.15;
+        }
+
+        const barHeight = smoothHeights[i];
+
+        // Left bar: mirror from center outward
         canvasCtx.fillRect(
-          halfWidth - firstx,
+          halfWidth - barWidth - i * step,
           height - barHeight,
           barWidth,
           barHeight
         );
-        firstx += barWidth;
-        canvasCtx.fillRect(secondx, height - barHeight, barWidth, barHeight);
-        secondx += barWidth;
+
+        // Right bar: from center outward
+        canvasCtx.fillRect(
+          halfWidth + i * step + gap,
+          height - barHeight,
+          barWidth,
+          barHeight
+        );
       }
 
       animationFrameIdRef.current = requestAnimationFrame(draw);
@@ -333,5 +358,5 @@ export const useAudioVisualizer = () => {
       if (animationFrameIdRef.current)
         cancelAnimationFrame(animationFrameIdRef.current);
     };
-  }, [analyzer, theme]);
+  }, [analyzer]);
 };

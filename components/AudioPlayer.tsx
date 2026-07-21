@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import IconButton from "./IconButton";
 import RangeSlider from "./RangeSlider";
-import styles from "../styles/AudioPlayer.module.css";
-import SkipPrevious from "./svgs/SkipPrevious";
-import { useTheme } from "next-themes";
-import SkipNext from "./svgs/SkipNext";
 import { usePlaylist } from "@/contexts/PlaylistContext";
-import Volume from "./svgs/Volume";
+import {
+  SkipBack,
+  SkipForward,
+  Volume2,
+  Play,
+  Pause,
+} from "lucide-react";
 
 const AudioPlayer = () => {
-  const { theme } = useTheme();
   const [animate, setAnimate] = useState(false);
   const [currentTime, setCurrentTime] = useState<string>("0:00");
   const [currentTimeInSeconds, setCurrentTimeInSeconds] = useState<number>(0);
@@ -81,66 +81,52 @@ const AudioPlayer = () => {
   }, [currentTrackId, audioRef]);
 
   return (
-    <div className="p-4 w-screen h-2/6 flex items-center justify-center flex-col gap-6">
-      <div className="flex justify-center items-center flex-col w-full flex-1">
-        <div className="flex justify-between w-10/12">
-          <span className="text-light dark:text-dark">{currentTime}</span>
-          <span className="text-light dark:text-dark font-bold">
-            {currentTrack?.name}
-          </span>
-          <span className="text-light dark:text-dark">
-            {currentTrack?.formattedDuration ?? "0:00"}
-          </span>
-        </div>
-        <RangeSlider
-          min={0}
-          max={currentTrack?.duration ?? 100}
-          value={currentTimeInSeconds}
-          step={1}
-          className="w-10/12"
-          onChange={updateTime}
-        />
-      </div>
-      <div className="flex justify-between md:justify-evenly items-center w-[100%] flex-1">
+    <div className="p-4 w-screen h-1/6 flex items-center justify-center flex-col gap-2">
+      <div className="flex justify-between md:justify-evenly items-center w-[100%]">
         <div className="w-1/6"></div>
         <div className="w-3/6 md:w-2/6 flex justify-center">
           <div className="flex items-center justify-around w-60">
-            <IconButton
-              className="w-10 h-10"
-              icon={<SkipPrevious />}
+            <button
               onClick={playPrevious}
-            />
-            <IconButton
-              icon={
-                <div
-                  className={`${
-                    styles.audioButton
-                  } max-w-16 max-h-16 min-w-10 min-h-10 h-[16vw] w-[16vw] ${
-                    isPlaying ? styles.pause : styles.play
-                  }
-              ${theme != "dark" ? "bg-light" : "bg-dark"}
-              ${animate ? styles.animate : ""}`}
-                />
-              }
-              onClick={togglePlay}
-            />
-            <IconButton
-              className="w-10 h-10"
-              icon={<SkipNext />}
+              className="text-white/80 hover:text-white transition-colors"
+              aria-label="Previous"
+            >
+              <SkipBack className="w-7 h-7" />
+            </button>
+            <button onClick={togglePlay} aria-label={isPlaying ? "Pause" : "Play"}>
+              <div
+                className={`max-w-16 max-h-16 min-w-10 min-h-10 h-[16vw] w-[16vw] bg-white rounded-full flex items-center justify-center filter drop-shadow-md transition-transform duration-200 ${
+                  animate ? "scale-90" : ""
+                }`}
+              >
+                {isPlaying ? (
+                  <Pause className="text-purple-700 w-1/2 h-1/2" />
+                ) : (
+                  <Play className="text-purple-700 w-1/2 h-1/2 ml-0.5" />
+                )}
+              </div>
+            </button>
+            <button
               onClick={playNext}
-            />
+              className="text-white/80 hover:text-white transition-colors"
+              aria-label="Next"
+            >
+              <SkipForward className="w-7 h-7" />
+            </button>
           </div>
         </div>
         <div ref={volumeRef} className="w-1/6 flex md:justify-center gap-2 flex-col-reverse items-center h-full md:flex-row relative">
-          <IconButton
-            icon={<Volume value={volume} />}
-            className="h-6 w-6 fill-light dark:fill-dark"
+          <button
             onClick={
               window.innerWidth < 768
                 ? () => setShowVolumePopup(!showVolumePopup)
                 : toggleMute
             }
-          />
+            className="text-white/80 hover:text-white transition-colors"
+            aria-label="Volume"
+          >
+            <Volume2 className="w-7 h-7" />
+          </button>
           {/* Desktop: horizontal slider */}
           <div className="hidden md:block">
             <RangeSlider
@@ -155,7 +141,7 @@ const AudioPlayer = () => {
           {/* Mobile: volume popup with horizontal slider */}
           {showVolumePopup && (
             <div
-              className="md:hidden absolute bottom-full mb-3 bg-light dark:bg-dark border border-primary-light/30 dark:border-primary-dark/30 rounded-xl p-4 shadow-xl z-50"
+              className="md:hidden absolute bottom-full mb-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4 shadow-xl z-50"
               style={{
                 left: "50%",
                 transform: "translateX(-50%)",
@@ -164,9 +150,9 @@ const AudioPlayer = () => {
               <div className="flex flex-col items-center gap-3">
                 <button
                   onClick={toggleMute}
-                  className="p-1 rounded-full hover:bg-primary-light/10 dark:hover:bg-primary-dark/10 transition-colors"
+                  className="p-1 rounded-full hover:bg-white/10 transition-colors"
                 >
-                  <Volume value={volume} />
+                  <Volume2 className="text-white" size={24} />
                 </button>
                 <RangeSlider
                   min={0}
@@ -176,7 +162,7 @@ const AudioPlayer = () => {
                   className="w-28"
                   onChange={changeVolume}
                 />
-                <div className="flex items-center gap-2 text-xs text-primary-light dark:text-primary-dark">
+                <div className="flex items-center gap-2 text-xs text-white/70">
                   <span>{Math.round(volume * 100)}%</span>
                   <button
                     onClick={toggleMute}
@@ -189,6 +175,25 @@ const AudioPlayer = () => {
             </div>
           )}
         </div>
+      </div>
+      <div className="flex justify-center items-center flex-col w-full">
+        <div className="flex justify-between w-10/12">
+          <span className="text-white/70 text-xs">{currentTime}</span>
+          <span className="text-white/70 text-xs font-bold truncate max-w-40">
+            {currentTrack?.name}
+          </span>
+          <span className="text-white/70 text-xs">
+            {currentTrack?.formattedDuration ?? "0:00"}
+          </span>
+        </div>
+        <RangeSlider
+          min={0}
+          max={currentTrack?.duration ?? 100}
+          value={currentTimeInSeconds}
+          step={1}
+          className="w-10/12"
+          onChange={updateTime}
+        />
       </div>
     </div>
   );

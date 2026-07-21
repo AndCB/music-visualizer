@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "lucide-react": "^1.25.0",
     "music-metadata-browser": "^2.5.10",
     "next": "14.2.3",
     "next-themes": "^0.3.0",
