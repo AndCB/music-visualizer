@@ -122,7 +122,7 @@ export const MusicButton = () => {
       {menuOpen && (
         <div
           className={`p-2 rounded-2xl z-50
-          w-60 max-w-[90vw] bg-white/20 backdrop-blur-sm border border-white/30`}
+          w-60 max-w-[90vw] bg-white/5 backdrop-blur-sm border border-white/30`}
           style={{
             position: "fixed",
             top: `${menuPosition.top + 8}px`,

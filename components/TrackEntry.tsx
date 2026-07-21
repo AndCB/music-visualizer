@@ -44,7 +44,7 @@ export const TrackEntry: React.FC<TrackEntryProps> = ({
     <div
       className={`flex items-center gap-1.5 rounded-xl p-1.5 ${
         index == currentTrackId
-          ? "bg-white/30 backdrop-blur-sm border border-white/30 shadow-[0_0_15px_rgba(255,255,255,0.15)]"
+          ? "bg-white/15 backdrop-blur-sm border border-white/20 border-l-2 border-l-purple-400/70 shadow-[0_0_12px_rgba(255,255,255,0.1)]"
           : "border border-white/10"
       }`}
       style={{ direction: "ltr" }}

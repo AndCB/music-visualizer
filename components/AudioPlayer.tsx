@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import RangeSlider from "./RangeSlider";
+import ProgressBar from "./ProgressBar";
 import { usePlaylist } from "@/contexts/PlaylistContext";
 import {
   SkipBack,
@@ -12,10 +12,10 @@ import {
 
 const AudioPlayer = () => {
   const [animate, setAnimate] = useState(false);
-  const [currentTime, setCurrentTime] = useState<string>("0:00");
   const [currentTimeInSeconds, setCurrentTimeInSeconds] = useState<number>(0);
   const [showVolumePopup, setShowVolumePopup] = useState(false);
   const volumeRef = useRef<HTMLDivElement>(null);
+  const animFrameRef = useRef<number | null>(null);
   const {
     playlist,
     isPlaying,
@@ -60,24 +60,22 @@ const AudioPlayer = () => {
     };
   }, [showVolumePopup]);
 
+  // Smooth progress update via requestAnimationFrame
   useEffect(() => {
-    if (!audioRef) {
-      console.log("no audio ref");
-      return;
-    }
+    if (!audioRef || currentTrackId === null) return;
 
-    const updateCurrentTime = () => {
-      const minutes = Math.floor(audioRef.currentTime / 60);
-      const seconds = Math.floor(audioRef.currentTime % 60);
-      setCurrentTime(`${minutes}:${seconds < 10 ? "0" : ""}${seconds}`);
-      setCurrentTimeInSeconds(audioRef.currentTime);
+    const updateProgress = () => {
+      if (audioRef) {
+        setCurrentTimeInSeconds(audioRef.currentTime);
+      }
+      animFrameRef.current = requestAnimationFrame(updateProgress);
     };
 
-    if (audioRef) audioRef.addEventListener("timeupdate", updateCurrentTime);
+    animFrameRef.current = requestAnimationFrame(updateProgress);
 
     return () => {
-      if (audioRef)
-        audioRef.removeEventListener("timeupdate", updateCurrentTime);
+      if (animFrameRef.current)
+        cancelAnimationFrame(animFrameRef.current);
     };
   }, [currentTrackId, audioRef]);
 
@@ -132,15 +130,13 @@ const AudioPlayer = () => {
               <Volume2 className="w-7 h-7" />
             )}
           </button>
-          {/* Desktop: horizontal slider */}
-          <div className="hidden md:block">
-            <RangeSlider
-              min={0}
-              max={1}
-              value={volume}
-              step={0.05}
-              className="max-w-60 w-full"
-              onChange={changeVolume}
+          {/* Desktop: volume bar */}
+          <div className="hidden md:block w-24 lg:w-40">
+            <ProgressBar
+              current={volume}
+              duration={1}
+              showLabels={false}
+              onSeek={changeVolume}
             />
           </div>
           {/* Mobile: volume popup with custom vertical slider */}
@@ -197,23 +193,16 @@ const AudioPlayer = () => {
           )}
         </div>
       </div>
-      <div className="flex justify-center items-center flex-col w-full">
-        <div className="flex justify-between w-10/12">
-          <span className="text-white/70 text-xs">{currentTime}</span>
-          <span className="text-white/70 text-xs font-bold truncate max-w-40">
-            {currentTrack?.name}
-          </span>
-          <span className="text-white/70 text-xs">
-            {currentTrack?.formattedDuration ?? "0:00"}
-          </span>
-        </div>
-        <RangeSlider
-          min={0}
-          max={currentTrack?.duration ?? 100}
-          value={currentTimeInSeconds}
-          step={1}
-          className="w-10/12"
-          onChange={updateTime}
+      <div className="flex justify-center items-center flex-col w-full max-w-xl px-4">
+        <ProgressBar
+          current={currentTimeInSeconds}
+          duration={currentTrack?.duration ?? 0}
+          onSeek={(time) => {
+            if (audioRef) {
+              audioRef.currentTime = time;
+              setCurrentTimeInSeconds(time);
+            }
+          }}
         />
       </div>
     </div>

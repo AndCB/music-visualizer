@@ -8,6 +8,8 @@ interface RangeSliderProps {
   value: number;
   step: number;
   onChange: (value: number) => void;
+  onSeekStart?: () => void;
+  onSeekEnd?: (value: number) => void;
   className?: string;
 }
 
@@ -17,41 +19,38 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
   value,
   step,
   onChange,
+  onSeekStart,
+  onSeekEnd,
   className,
 }) => {
   const rangeRef = useRef<HTMLInputElement>(null);
+  const isDraggingRef = useRef(false);
 
   const handleOnChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    event.preventDefault();
-    onChange(parseFloat(event.currentTarget.value));
+    const val = parseFloat(event.currentTarget.value);
+    onChange(val);
+    // Update --sx immediately on drag for smooth fill
+    if (rangeRef.current) {
+      const range = max - min;
+      const ratio = (val - min) / range;
+      rangeRef.current.style.setProperty(
+        "--sx",
+        `calc(0.5 * 1.5em + ${ratio} * (100% - 1.5em))`
+      );
+    }
   };
 
-  const { currentTrackId } = usePlaylist();
+  const handleMouseDown = () => {
+    isDraggingRef.current = true;
+    onSeekStart?.();
+  };
 
-  useEffect(() => {
-    const rangeInput = rangeRef.current;
-
-    const handleInput = () => {
-      if (rangeInput && currentTrackId) {
-        let range = max - min;
-        let ratio = (parseInt(rangeInput.value) - min) / range;
-        rangeInput.style.setProperty(
-          "--sx",
-          `calc(0.5 * 1.5em + ${ratio} * (100% - 1.5em))`
-        );
-      }
-    };
-
-    if (rangeInput) {
-      rangeInput.addEventListener("input", handleInput);
+  const handleMouseUp = () => {
+    if (isDraggingRef.current) {
+      isDraggingRef.current = false;
+      onSeekEnd?.(value);
     }
-
-    return () => {
-      if (rangeInput) {
-        rangeInput.removeEventListener("input", handleInput);
-      }
-    };
-  }, [currentTrackId, min, max]);
+  };
 
   return (
     <input
@@ -62,6 +61,10 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
       step={step}
       ref={rangeRef}
       onChange={handleOnChange}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onTouchStart={handleMouseDown}
+      onTouchEnd={handleMouseUp}
       className={`
       ${styles.customInput}
         slider-track:bg-gradient-to-b

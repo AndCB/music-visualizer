@@ -68,6 +68,25 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({
   const analizerRef = useRef<AnalyserNode | null>(null);
   const [isMute, setIsMute] = useState(false);
   const [volume, setVolume] = useState(0.8);
+  const hasAutoAddedRef = useRef(false);
+
+  // Auto-add a demo track on first mount if playlist is empty
+  useEffect(() => {
+    if (hasAutoAddedRef.current) return;
+    hasAutoAddedRef.current = true;
+
+    const demo: Track = {
+      name: "Ode to Joy",
+      artist: "Ludwig van Beethoven",
+      album: "Symphony No. 9",
+      formattedDuration: "00:39",
+      duration: 39,
+      url: "/demo.ogg",
+    };
+    setPlaylist([demo]);
+    setCurrentTrackId(0);
+    setUpdateSrc(true);
+  }, []);
 
   useEffect(() => {
     const AudioContextClass =

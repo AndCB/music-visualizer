@@ -60,10 +60,10 @@ const DragNDrop: React.FC<DragNDropProps> = ({
         className={`
           border-dashed border-2 rounded-3xl flex justify-center items-center text-center
           transition-all duration-200 ease-in-out
-          bg-white/10 backdrop-blur-sm
+          bg-white/5 backdrop-blur-sm
           ${
             isDragging
-              ? "border-white/70 scale-[1.02] bg-white/20"
+              ? "border-white/70 scale-[1.02] bg-white/10"
               : "border-white/30"
           }
         `}
