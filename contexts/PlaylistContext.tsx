@@ -25,7 +25,7 @@ interface PlaylistContextType {
   volume: number;
   audioContext: AudioContext | null;
   analyzer: AnalyserNode | null;
-  dataArray: Uint8Array | null;
+  dataArray: Uint8Array<ArrayBuffer> | null;
   bufferLength: number | null;
   audioRef: HTMLAudioElement | null;
   toggleIsPlaying: () => void;
@@ -65,7 +65,7 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const gainRef = useRef<GainNode | null>(null);
   const bufferLengthRef = useRef<number | null>(null);
-  const dataArrayRef = useRef<Uint8Array | null>(null);
+  const dataArrayRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
   const analizerRef = useRef<AnalyserNode | null>(null);
   const [isMute, setIsMute] = useState(false);
   const [volume, setVolume] = useState(0.8);
@@ -83,7 +83,7 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({
       const analizer = audioContextRef.current.createAnalyser();
       analizer.fftSize = 32;
       bufferLengthRef.current = analizer.frequencyBinCount;
-      dataArrayRef.current = new Uint8Array(analizer.frequencyBinCount);
+      dataArrayRef.current = new Uint8Array(analizer.frequencyBinCount) as Uint8Array<ArrayBuffer>;
       analizerRef.current = analizer;
 
       const gainNode = audioContextRef.current.createGain();
@@ -147,16 +147,9 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [isPlaying]);
 
   const addTrack = (track: Track) => {
-    // const newTrack: Track = { ...track, id: idCounter.current };
-    // const newTrack: Track = track;
-    // idCounter.current++;
-    setPlaylist((prevPlaylist) => {
-      const newPlaylist = [...prevPlaylist, track];
-      if (prevPlaylist.length === 0) playTrack(0);
-      return newPlaylist;
-    });
-    // console.log(currentTrackId);
-    // if (currentTrackId == -1) setCurrentTrackId(0);
+    const wasEmpty = playlist.length === 0;
+    setPlaylist((prevPlaylist) => [...prevPlaylist, track]);
+    if (wasEmpty) playTrack(0);
   };
 
   const removeTrack = (trackId: number) => {
