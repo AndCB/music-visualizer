@@ -9,7 +9,7 @@ export const AudioCanvas = () => {
         id="audioVisualizerCanvas"
         width={1000}
         height={500}
-        className="w-full h-full"
+        className="w-full h-full object-contain"
       />
     </div>
   );

@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import styles from "../styles/MusicButton.module.css";
 import DragNDrop from "./DragNDrop";
 import { usePlaylist } from "@/contexts/PlaylistContext";
 import { getTrackData } from "@/services/MusicMetadataService";
@@ -55,8 +54,8 @@ export const MusicButton = () => {
     if (btnRef.current) {
       const rect = btnRef.current.getBoundingClientRect();
       setMenuPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
+        top: rect.bottom,
+        left: rect.left,
       });
       setMenuOpen(!menuOpen);
       setAnimate(true);
@@ -122,11 +121,11 @@ export const MusicButton = () => {
       </button>
       {menuOpen && (
         <div
-          className={`${styles.menu} p-2 rounded-2xl
-          ${menuOpen ? styles.active : ""} 
-          w-60 bg-white/20 backdrop-blur-sm border border-white/30`}
+          className={`p-2 rounded-2xl z-50
+          w-60 max-w-[90vw] bg-white/20 backdrop-blur-sm border border-white/30`}
           style={{
-            top: `calc(${menuPosition.top}px + 2em)`,
+            position: "fixed",
+            top: `${menuPosition.top + 8}px`,
             left: `${menuPosition.left}px`,
           }}
         >

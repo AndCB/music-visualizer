@@ -5,6 +5,7 @@ import {
   SkipBack,
   SkipForward,
   Volume2,
+  VolumeX,
   Play,
   Pause,
 } from "lucide-react";
@@ -125,7 +126,11 @@ const AudioPlayer = () => {
             className="text-white/80 hover:text-white transition-colors"
             aria-label="Volume"
           >
-            <Volume2 className="w-7 h-7" />
+            {volume === 0 ? (
+              <VolumeX className="w-7 h-7" />
+            ) : (
+              <Volume2 className="w-7 h-7" />
+            )}
           </button>
           {/* Desktop: horizontal slider */}
           <div className="hidden md:block">
@@ -138,7 +143,7 @@ const AudioPlayer = () => {
               onChange={changeVolume}
             />
           </div>
-          {/* Mobile: volume popup with horizontal slider */}
+          {/* Mobile: volume popup with custom vertical slider */}
           {showVolumePopup && (
             <div
               className="md:hidden absolute bottom-full mb-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4 shadow-xl z-50"
@@ -148,29 +153,45 @@ const AudioPlayer = () => {
               }}
             >
               <div className="flex flex-col items-center gap-3">
+                {/* Custom vertical volume slider */}
+                <div className="relative h-28 w-8 flex items-center justify-center">
+                  {/* Track background */}
+                  <div className="absolute bottom-0 w-1.5 h-full bg-white/20 rounded-full" />
+                  {/* Filled portion */}
+                  <div
+                    className="absolute bottom-0 w-1.5 bg-white/70 rounded-full transition-all duration-75"
+                    style={{ height: `${volume * 100}%` }}
+                  />
+                  {/* Thumb indicator */}
+                  <div
+                    className="absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-white rounded-full shadow-md transition-all duration-75"
+                    style={{ bottom: `calc(${volume * 100}% - 0.5rem)` }}
+                  />
+                  {/* Hidden native input for interaction */}
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={volume}
+                    onChange={(e) => changeVolume(parseFloat(e.target.value))}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    style={{ writingMode: "vertical-lr", direction: "rtl" } as React.CSSProperties}
+                  />
+                </div>
                 <button
                   onClick={toggleMute}
-                  className="p-1 rounded-full hover:bg-white/10 transition-colors"
+                  className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
                 >
-                  <Volume2 className="text-white" size={24} />
+                  {volume === 0 ? (
+                    <VolumeX className="text-white" size={20} />
+                  ) : (
+                    <Volume2 className="text-white" size={20} />
+                  )}
                 </button>
-                <RangeSlider
-                  min={0}
-                  max={1}
-                  value={volume}
-                  step={0.05}
-                  className="w-28"
-                  onChange={changeVolume}
-                />
-                <div className="flex items-center gap-2 text-xs text-white/70">
-                  <span>{Math.round(volume * 100)}%</span>
-                  <button
-                    onClick={toggleMute}
-                    className="opacity-60 hover:opacity-100 transition-opacity underline"
-                  >
-                    {volume === 0 ? "Unmute" : "Mute"}
-                  </button>
-                </div>
+                <span className="text-xs text-white/70 font-medium">
+                  {Math.round(volume * 100)}%
+                </span>
               </div>
             </div>
           )}
