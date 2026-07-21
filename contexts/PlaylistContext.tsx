@@ -76,12 +76,12 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({
     hasAutoAddedRef.current = true;
 
     const demo: Track = {
-      name: "Ode to Joy",
+      name: "Für Elise",
       artist: "Ludwig van Beethoven",
-      album: "Symphony No. 9",
-      formattedDuration: "00:39",
-      duration: 39,
-      url: "/demo.ogg",
+      album: "Bagatelle in A Minor",
+      formattedDuration: "3:06",
+      duration: 186,
+      url: "/demo.mp3",
     };
     setPlaylist([demo]);
     setCurrentTrackId(0);
