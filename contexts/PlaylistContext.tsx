@@ -24,7 +24,7 @@ interface PlaylistContextType {
   volume: number;
   audioContext: AudioContext | null;
   analyzer: AnalyserNode | null;
-  dataArray: Uint8Array<ArrayBuffer> | null;
+  dataArray: Uint8Array | null;
   bufferLength: number | null;
   audioRef: HTMLAudioElement | null;
   toggleIsPlaying: () => void;
@@ -64,7 +64,7 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const gainRef = useRef<GainNode | null>(null);
   const bufferLengthRef = useRef<number | null>(null);
-  const dataArrayRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
+  const dataArrayRef = useRef<Uint8Array | null>(null);
   const analizerRef = useRef<AnalyserNode | null>(null);
   const [isMute, setIsMute] = useState(false);
   const [volume, setVolume] = useState(0.8);
