@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
 interface DragNDropProps {
   onFilesSelected: (files: File[]) => void;
@@ -11,12 +11,27 @@ const DragNDrop: React.FC<DragNDropProps> = ({
   width,
   height,
 }) => {
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if (!isDragging) setIsDragging(true);
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    // Only set false if we're actually leaving the drop zone (not entering a child)
+    if (event.currentTarget === event.target || !event.currentTarget.contains(event.relatedTarget as Node)) {
+      setIsDragging(false);
+    }
+  };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    setIsDragging(false);
     const files = Array.from(event.dataTransfer.files);
-    onFilesSelected(files);
+    if (files.length > 0) onFilesSelected(files);
   };
 
   const handleFileInputChange = (
@@ -29,17 +44,28 @@ const DragNDrop: React.FC<DragNDropProps> = ({
     }
   };
 
-  const handleBrowseClick = () => {
+  const handleBrowseClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
+
   return (
     <>
       <div
         onDrop={handleDrop}
-        onDragOver={(event) => event.preventDefault()}
-        className="border-dashed border-2 rounded-3xl flex justify-center items-center text-center border-primary-light dark:border-primary-dark"
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        className={`
+          border-dashed border-2 rounded-3xl flex justify-center items-center text-center
+          transition-all duration-200 ease-in-out
+          ${
+            isDragging
+              ? "border-primary-light dark:border-primary-dark scale-[1.02] bg-primary-light/10 dark:bg-primary-dark/10"
+              : "border-primary-light/50 dark:border-primary-dark/50"
+          }
+        `}
         style={{
           width: width || "100%",
           height: height || "100%",
@@ -47,19 +73,27 @@ const DragNDrop: React.FC<DragNDropProps> = ({
           minWidth: "10em",
         }}
       >
-        <p className="text-primary-light dark:text-primary-dark w-5/6">
-          Drop your music here, or{" "}
-          <a href="#" onClick={handleBrowseClick}>
-            <u>click here to browse</u>
-          </a>
-        </p>
+        <div className={`transition-transform duration-200 ${isDragging ? "scale-110" : ""}`}>
+          <p className="text-primary-light dark:text-primary-dark w-5/6 mx-auto">
+            {isDragging ? (
+              <span className="font-bold">Drop your files here! 🎵</span>
+            ) : (
+              <>
+                Drop your music here, or{" "}
+                <a href="#" onClick={handleBrowseClick}>
+                  <u>click here to browse</u>
+                </a>
+              </>
+            )}
+          </p>
+        </div>
         <input
           ref={fileInputRef}
           type="file"
           className="hidden"
           onChange={handleFileInputChange}
           multiple
-          accept=".mp3"
+          accept=".mp3,.wav,.ogg,.flac,.aac,.m4a"
         />
       </div>
     </>

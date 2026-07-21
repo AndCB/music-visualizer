@@ -83,7 +83,7 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({
       const analizer = audioContextRef.current.createAnalyser();
       analizer.fftSize = 32;
       bufferLengthRef.current = analizer.frequencyBinCount;
-      dataArrayRef.current = new Uint8Array(analizer.frequencyBinCount) as Uint8Array<ArrayBuffer>;
+      dataArrayRef.current = new Uint8Array(new ArrayBuffer(analizer.frequencyBinCount));
       analizerRef.current = analizer;
 
       const gainNode = audioContextRef.current.createGain();

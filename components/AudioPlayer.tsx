@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import IconButton from "./IconButton";
 import RangeSlider from "./RangeSlider";
 import styles from "../styles/AudioPlayer.module.css";
@@ -13,6 +13,8 @@ const AudioPlayer = () => {
   const [animate, setAnimate] = useState(false);
   const [currentTime, setCurrentTime] = useState<string>("0:00");
   const [currentTimeInSeconds, setCurrentTimeInSeconds] = useState<number>(0);
+  const [showVolumePopup, setShowVolumePopup] = useState(false);
+  const volumeRef = useRef<HTMLDivElement>(null);
   const {
     playlist,
     isPlaying,
@@ -36,6 +38,26 @@ const AudioPlayer = () => {
 
   // const currentTrack = playlist.find((track) => track.id === currentTrackId);
   const currentTrack = playlist[currentTrackId!] ?? undefined;
+
+  // Close volume popup on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        volumeRef.current &&
+        !volumeRef.current.contains(event.target as Node)
+      ) {
+        setShowVolumePopup(false);
+      }
+    };
+
+    if (showVolumePopup) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showVolumePopup]);
 
   useEffect(() => {
     if (!audioRef) {
@@ -109,20 +131,63 @@ const AudioPlayer = () => {
             />
           </div>
         </div>
-        <div className="w-1/6 flex md:justify-center gap-2 flex-col-reverse items-center h-full md:flex-row">
+        <div ref={volumeRef} className="w-1/6 flex md:justify-center gap-2 flex-col-reverse items-center h-full md:flex-row relative">
           <IconButton
             icon={<Volume value={volume} />}
             className="h-6 w-6 fill-light dark:fill-dark"
-            onClick={toggleMute}
+            onClick={
+              window.innerWidth < 768
+                ? () => setShowVolumePopup(!showVolumePopup)
+                : toggleMute
+            }
           />
-          <RangeSlider
-            min={0}
-            max={1}
-            value={volume}
-            step={0.05}
-            className="max-w-60 w-full origin-left -rotate-90 translate-x-1/2 md:transform-none"
-            onChange={changeVolume}
-          />
+          {/* Desktop: horizontal slider */}
+          <div className="hidden md:block">
+            <RangeSlider
+              min={0}
+              max={1}
+              value={volume}
+              step={0.05}
+              className="max-w-60 w-full"
+              onChange={changeVolume}
+            />
+          </div>
+          {/* Mobile: volume popup with horizontal slider */}
+          {showVolumePopup && (
+            <div
+              className="md:hidden absolute bottom-full mb-3 bg-light dark:bg-dark border border-primary-light/30 dark:border-primary-dark/30 rounded-xl p-4 shadow-xl z-50"
+              style={{
+                left: "50%",
+                transform: "translateX(-50%)",
+              }}
+            >
+              <div className="flex flex-col items-center gap-3">
+                <button
+                  onClick={toggleMute}
+                  className="p-1 rounded-full hover:bg-primary-light/10 dark:hover:bg-primary-dark/10 transition-colors"
+                >
+                  <Volume value={volume} />
+                </button>
+                <RangeSlider
+                  min={0}
+                  max={1}
+                  value={volume}
+                  step={0.05}
+                  className="w-28"
+                  onChange={changeVolume}
+                />
+                <div className="flex items-center gap-2 text-xs text-primary-light dark:text-primary-dark">
+                  <span>{Math.round(volume * 100)}%</span>
+                  <button
+                    onClick={toggleMute}
+                    className="opacity-60 hover:opacity-100 transition-opacity underline"
+                  >
+                    {volume === 0 ? "Unmute" : "Mute"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
